@@ -1,0 +1,9 @@
+# Exclude local build artifacts and secrets from the Docker context
+target/
+.git
+.gitignore
+.env
+.env.*
+*.log
+docker-compose.yml
+README.md

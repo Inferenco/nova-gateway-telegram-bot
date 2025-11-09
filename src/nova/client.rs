@@ -1,6 +1,7 @@
 use std::time::Duration;
 
 use reqwest::{Client, StatusCode};
+use serde_json;
 use thiserror::Error;
 use tokio::time::sleep;
 
@@ -63,11 +64,24 @@ impl NovaClient {
                 return response.json::<NovaResponse>().await.map_err(NovaClientError::from);
             }
 
-            let message = match response.json::<NovaErrorResponse>().await {
+            let response_text = response.text().await.unwrap_or_else(|_| String::new());
+            let message = match serde_json::from_str::<NovaErrorResponse>(&response_text) {
                 Ok(payload) => payload
                     .message
-                    .unwrap_or_else(|| format!("request failed with status {}", status.as_u16())),
-                Err(_) => format!("request failed with status {}", status.as_u16()),
+                    .unwrap_or_else(|| {
+                        if response_text.is_empty() {
+                            format!("request failed with status {}", status.as_u16())
+                        } else {
+                            format!("request failed with status {}: {}", status.as_u16(), response_text)
+                        }
+                    }),
+                Err(_) => {
+                    if response_text.is_empty() {
+                        format!("request failed with status {}", status.as_u16())
+                    } else {
+                        format!("request failed with status {}: {}", status.as_u16(), response_text)
+                    }
+                }
             };
 
             return Err(NovaClientError::Gateway {
@@ -92,11 +106,24 @@ impl NovaClient {
         if status.is_success() {
             Ok(())
         } else {
-            let message = match response.json::<NovaErrorResponse>().await {
+            let response_text = response.text().await.unwrap_or_else(|_| String::new());
+            let message = match serde_json::from_str::<NovaErrorResponse>(&response_text) {
                 Ok(payload) => payload
                     .message
-                    .unwrap_or_else(|| format!("failed to clear history: status {}", status.as_u16())),
-                Err(_) => format!("failed to clear history: status {}", status.as_u16()),
+                    .unwrap_or_else(|| {
+                        if response_text.is_empty() {
+                            format!("failed to clear history: status {}", status.as_u16())
+                        } else {
+                            format!("failed to clear history: status {}: {}", status.as_u16(), response_text)
+                        }
+                    }),
+                Err(_) => {
+                    if response_text.is_empty() {
+                        format!("failed to clear history: status {}", status.as_u16())
+                    } else {
+                        format!("failed to clear history: status {}: {}", status.as_u16(), response_text)
+                    }
+                }
             };
 
             Err(NovaClientError::Gateway {

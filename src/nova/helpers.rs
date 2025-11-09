@@ -32,10 +32,10 @@ pub fn create_request(
         ref_id,
         input,
         model: model.to_string(),
-        verbosity: verbosity.to_string(),
+        verbosity: verbosity.to_lowercase(),
         max_tokens,
         reasoning: reasoning.enabled,
         reasoning_params,
-        image_urls: None,
+        image_urls: Vec::new(),
     }
 }

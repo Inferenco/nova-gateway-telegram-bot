@@ -43,15 +43,30 @@ impl BotController {
         let chat_id = message.chat.id;
 
         match command {
-            BotCommand::Start | BotCommand::Help => self.send_help(chat_id).await,
+            BotCommand::Help => self.send_help(chat_id).await,
             BotCommand::Reset => self.reset_conversation(chat_id).await,
+            BotCommand::Chat => {
+                let text = helpers::extract_plain_text(message).ok_or(BotError::MissingMessageText)?;
+                // Extract text after /chat command (handles both /chat and /chat@botname)
+                let prompt = if let Some(space_idx) = text.find(' ') {
+                    text[space_idx + 1..].to_string()
+                } else {
+                    // No space found, command has no arguments
+                    return Err(BotError::MissingMessageText);
+                };
+                
+                if prompt.trim().is_empty() {
+                    return Err(BotError::MissingMessageText);
+                }
+                
+                self.forward_to_nova(chat_id, prompt.trim().to_string()).await
+            }
         }
     }
 
-    pub async fn handle_text_message(&self, message: &Message) -> Result<(), BotError> {
-        let chat_id = message.chat.id;
-        let text = helpers::extract_plain_text(message).ok_or(BotError::MissingMessageText)?;
-        self.forward_to_nova(chat_id, text).await
+    pub async fn handle_text_message(&self, _message: &Message) -> Result<(), BotError> {
+        // Regular text messages are ignored - only /chat command is processed
+        Ok(())
     }
 
     pub async fn notify_error(&self, chat_id: ChatId, error: &BotError) -> Result<(), RequestError> {
@@ -119,7 +134,7 @@ impl BotError {
         match self {
             BotError::Telegram(_) => None,
             BotError::Nova(err) => Some(format!("Nova Gateway error: {err}")),
-            BotError::MissingMessageText => Some("Please send text so I can forward it to Nova Gateway.".to_string()),
+            BotError::MissingMessageText => Some("Please provide a message after /chat. Example: /chat Hello, how are you?".to_string()),
         }
     }
 }

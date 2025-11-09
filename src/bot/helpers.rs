@@ -12,10 +12,10 @@ pub fn format_help_text() -> String {
     vec![
         "Hello! I'm a Nova Gateway assistant.",
         "\nUse these commands:",
-        "/start - Start interacting with the bot",
         "/help - Show this help message",
         "/reset - Clear the conversation context",
-        "\nSend any other message and I'll forward it to Nova Gateway.",
+        "/chat - Chat with Nova Gateway",
+        "\nExample: /chat Hello, how are you?",
     ]
     .join("\n")
 }

@@ -11,8 +11,7 @@ pub struct NovaRequest {
     pub reasoning: bool,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub reasoning_params: Option<NovaReasoningParams>,
-    #[serde(skip_serializing_if = "Option::is_none")]
-    pub image_urls: Option<Vec<String>>,
+    pub image_urls: Vec<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
