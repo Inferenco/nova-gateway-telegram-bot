@@ -32,6 +32,17 @@ cargo run
 
 The bot registers the `/start`, `/help`, and `/reset` commands. Use `/reset` to clear the Nova conversation history for the current chat.
 
+## Generating a Nova API Key
+Follow these steps in the Nova Telegram bot to generate and manage your API key ([docs](https://inferenco.com/app.html#docs)):
+
+1. Open Telegram, search for `@NovaInferencoBot` or go from this [link](https://t.me/NovaInferencoBot), and click **Start**.
+2. Run `/loginuser` to authenticate with the Nova platform.
+3. Run `/walletaddress` to get your Nova wallet address, then fund it with these supported Aptos token (APT, USDC, USDT, GUI).
+4. Run `/usersettings` and choose **🔑 API Key** to enter the key management wizard.
+5. Complete the prompted steps to create a new API key (choose app name, tools, limits, etc.).
+6. After creation, copy the displayed API key and store it securely—this is the value to place in `NOVA_API_KEY`.
+7. To upload documents to the key’s knowledge base later, reopen `/usersettings` → **🔑 API Key** → **📁 Document Library**, then use **📎 Upload Files**.
+
 ## Docker
 Build the image from the project root:
 
@@ -50,6 +61,9 @@ Or let Docker Compose handle the build/run loop after you copy `.env.sample`:
 ```bash
 docker compose up --build
 ```
+
+## License
+This template is licensed under the terms described in the bundled `LICENSE` file. Spielcrypto Ltd and Singularity Shift Ltd retain all rights. You may download, modify, and redistribute it solely for use with or integration into the Nova platform. Any other use requires prior written authorization from the rights holders.
 
 ## Cloud Run
 Deploy to Google Cloud Run with the Dockerfile in this repo:
