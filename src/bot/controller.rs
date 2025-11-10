@@ -7,7 +7,7 @@ use tokio::sync::Mutex;
 use crate::{
     config::Config,
     nova::{helpers as nova_helpers, NovaClient, NovaClientError},
-    utils,
+    utils::{self, TypingIndicator},
 };
 
 use super::{dto::{BotCommand, ChatState}, helpers};
@@ -103,6 +103,7 @@ impl BotController {
     }
 
     async fn forward_to_nova(&self, chat_id: ChatId, text: String) -> Result<(), BotError> {
+        let _typing_indicator = TypingIndicator::start(self.bot.clone(), chat_id);
         let ref_id = self.ensure_ref_id(chat_id).await;
         let request = nova_helpers::create_request(
             Some(ref_id.clone()),
