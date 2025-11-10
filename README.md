@@ -63,7 +63,7 @@ docker compose up --build
 ```
 
 ## License
-This template is licensed under the terms described in the bundled `LICENSE` file. Spielcrypto Ltd and Singularity Shift Ltd retain all rights. You may download, modify, and redistribute it solely for use with or integration into the Nova platform. Any other use requires prior written authorization from the rights holders.
+See the following [License file](LICENSE)
 
 ## Cloud Run
 Deploy to Google Cloud Run with the Dockerfile in this repo:
